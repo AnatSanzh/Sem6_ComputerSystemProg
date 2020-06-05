@@ -65,7 +65,7 @@
 							            if(!res.ok){
 								            alert('Невірний формат полів!');
 								        }
-							        }
+							        });
 					    		}
 
 					    		function delete_new(){
@@ -74,7 +74,7 @@
 							            method: "DELETE"
 							        }).then(res => {
 							            window.location.href = '/registrator/list';
-							        }
+							        });
 					    		}
 					    	</script>
 					      <button type="button" class="btn btn-primary" onclick="add_new()">Зберегти</button>

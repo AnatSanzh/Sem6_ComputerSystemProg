@@ -11,13 +11,13 @@ process.on('SIGINT',async () => (await connectionPromise).close().then(() => pro
 	//await connection.synchronize();
 
 	const districtNames = ["Київська область","Закарпатська область","Черкаська область","Полтавська область"];
-	for (const name in districtNames) {
+	for (const name of districtNames) {
 		const tempDistrict = new ExecutionDistrict();
 		tempDistrict.district_name = name;
 		await tempDistrict.save();
 	}
 
-	{
+	/*{
 		const admin = new User();
 
 		admin.login = "admin";
@@ -29,7 +29,7 @@ process.on('SIGINT',async () => (await connectionPromise).close().then(() => pro
 		admin.additional_data = "";
 
 		await admin.save();
-	}
+	}*/
 
 	process.exit();
 })();

@@ -18,10 +18,14 @@ import { Like, Equal } from "typeorm";
 
 
 async function getLoggedUser(req: express.Request){
-	if(req.signedCookies[cookieName] == undefined)
+	if(req.cookies[cookieName] == undefined || req.cookies[cookieName] == "")
 		return;
 
-	return User.findOne(JSON.parse(req.signedCookies[cookieName]).login);
+	console.log(req.cookies[cookieName]);
+	console.log(decodeURIComponent(req.cookies[cookieName]));
+	console.log(JSON.parse(decodeURIComponent(req.cookies[cookieName])));
+
+	return User.findOne(JSON.parse(decodeURIComponent(req.cookies[cookieName])).login);
 }
 
 const app: express.Application = express();
@@ -116,7 +120,7 @@ app.get('/priv-exec/new', async (req: any, res: express.Response) => {
 
 	if(loggedUser == undefined) return res.redirect('/error/permission-denied');
 	
-	res.render('pages/priv-exec-new', { role: loggedUser.role });
+	res.render('pages/priv-exec-new', { role: loggedUser.role, districts: await ExecutionDistrict.find() });
 });
 app.get('/priv-exec/:id/edit', async (req: any, res: express.Response) => {
 	const loggedUser = await getLoggedUser(req);
@@ -126,7 +130,7 @@ app.get('/priv-exec/:id/edit', async (req: any, res: express.Response) => {
 	if(loggedUser == undefined || oldPrivExecVal == undefined)
 		return res.redirect('/error/permission-denied');
 	
-	res.render('pages/priv-exec-edit', { role: loggedUser.role, oldPrivExecVal });
+	res.render('pages/priv-exec-edit', { role: loggedUser.role, oldPrivExecVal, districts: await ExecutionDistrict.find() });
 });
 app.get('/registrator/new', async (req: any, res: express.Response) => {
 	const loggedUser = await getLoggedUser(req);
@@ -155,11 +159,11 @@ app.get('/error/permission-denied', async (req: any, res: express.Response) => {
 
 
 app.post('/api/auth/login', async (req: express.Request, res: express.Response) => {
-	const { login, password } = req.body;
-
+	const {login, password} = JSON.parse(req.body);
+	
 	const userData = await User.findOne(login);
 
-	if(userData != undefined && userData.pwd_hash === password && userData.is_active === true){
+	if(userData != undefined && userData.pwd_hash == password && userData.is_active == true){
 		res.cookie(cookieName, JSON.stringify({login, password}), cookieOptions);
 
 	    res.status(200).send();
@@ -175,7 +179,7 @@ app.post('/api/auth/logout', async (req: express.Request, res: express.Response)
 
 
 app.post('/api/user', async (req: express.Request, res: express.Response) => {
-	const { fullname, additional_data } = req.body;
+	const { fullname, additional_data } = JSON.parse(req.body);
 
 	const identificationData = {
 		login: uuidV1(),
@@ -215,7 +219,7 @@ app.post('/api/user/:login/res_id', async (req: express.Request, res: express.Re
     res.status(200).send();
 });
 app.put('/api/user/:login', async (req: express.Request, res: express.Response) => {
-	const { fullname, additional_data, is_active } = req.body;
+	const { fullname, additional_data, is_active } = JSON.parse(req.body);
 
 	const user = await User.findOne(req.params.login);
 
@@ -242,14 +246,14 @@ app.post('/api/priv-exec', async (req: express.Request, res: express.Response) =
 	const { 
 		fullname, district_id, certificate_num,
 		rec_certif_on, office_addr, started_out_on
-	} = req.body;
-	const user_login = JSON.parse(req.signedCookies[cookieName]).login;
+	} = JSON.parse(req.body);
+	const user = await getLoggedUser(req);
 
 	if(await PrivateExecutor.findOne({ fullname }) == undefined){
 		const privExec = new PrivateExecutor();
 
 		privExec.fullname = fullname;
-		privExec.user = await User.findOne(user_login);
+		privExec.user = user;
 		privExec.district = await ExecutionDistrict.findOne(district_id);
 		privExec.is_active = true;
 		privExec.created_on = (new Date()).toISOString();
@@ -270,7 +274,7 @@ app.put('/api/priv-exec/:id', async (req: express.Request, res: express.Response
 		fullname, district_id, certificate_num,
 		rec_certif_on, office_addr, started_out_on,
 		is_active
-	} = req.body;
+	} = JSON.parse(req.body);
 
 	const privExec = await PrivateExecutor.findOne(req.params.id);
 
