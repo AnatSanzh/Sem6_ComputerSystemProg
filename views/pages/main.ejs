@@ -1,19 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-	    <%- include('../partials/head', {role}) -%>
+	    <%- include('../partials/head', {role: role}) -%>
 	</head>
 	<body class="container">
 
 		<header>
-		    <%- include('../partials/header', {role}) -%>
+		    <%- include('../partials/header', {role: role}) -%>
 		</header>
 
 		<main>
-		    <div class="jumbotron">
-		        <h1>This is great</h1>
-		        <p>Welcome to templating using EJS</p>
-		    </div>
+			<div class="panel panel-default">
+				<div class="panel-body">
+				    <form>
+					  <div class="form-group">
+					    <label for="inputName" class="col-sm-2 col-form-label">П.І.Б</label>
+					    <div class="col-sm-10">
+					      <input type="text" class="form-control" id="inputName" placeholder="Прізвище Ім'я По-Батькові" <% if(fullname){ %>value="<%= fullname %>"<% } %>>
+					    </div>
+					  </div>
+					  <div class="form-group">
+					    <label for="inputCert" class="col-sm-2 col-form-label">Номер сертифікату:</label>
+					    <div class="col-sm-10">
+					      <input type="text" class="form-control" id="inputCert" placeholder="1234" <% if(certificate_num){ %>value="<%= certificate_num %>"<% } %>>
+					    </div>
+					  </div>
+					  <div class="form-group">
+					      <label class="col-sm-2 col-form-label" for="selActivity">Активність:</label>
+					      <div class="col-sm-10">
+						      <select class="form-control" id="selActivity">
+						        <option value=""></option>
+						        <option value="1">Діє</option>
+						        <option value="0">Недіє</option>
+						      </select>
+						  </div>
+					  </div>
+					  <div class="form-group">
+					      <label class="col-sm-2 col-form-label" for="selDistrict">Виконавчий округ:</label>
+					      <div class="col-sm-10">
+						      <select class="form-control" id="selDistrict">
+						        <option value="" <% if(!district_id){ %>selected<% } %> ></option>
+						        <% districts.forEach(({id, district_name}) => {%>
+						        <option value="<%= id %>" <% if(district_id===id){ %>selected<% } %> ><%= district_name %></option>
+						        <% }); %>
+						      </select>
+						   </div>
+					  </div>
+					  <div class="form-group">
+					    <div class="col-sm-10">
+					    	<script type="text/javascript">
+					    		var name_input = document.getElementById("inputName");
+								var cert_input = document.getElementById("inputCert");
+								var activity_sel = document.getElementById("selActivity");
+								var district_sel = document.getElementById("selDistrict");
+
+					    		function search(){
+					    			var name = name_input.value;
+					    			var certivicate_num = cert_input.value;
+					    			var activity_val = activity_sel.options[activity_sel.selectedIndex].value;
+					    			var district_val = district_sel.options[district_sel.selectedIndex].value;
+					    			
+					    			var url = '/?';
+
+					    			if(name!="") url+='fullname='+name+'&';
+					    			if(certivicate_num!="") url+='certificate_num='+certivicate_num+'&';
+									if(activity_val!="") url+='is_active='+(activity_val === 1)+'&';
+									if(district_val!="") url+='district_id='+district_val+'&';
+					    			
+					    			window.location.reload(true);
+					    			window.location.href = url;
+					    		}
+					    	</script>
+					      <button type="button" class="btn btn-primary" onclick="search()">Пошук</button>
+					      <button type="button" class="btn btn-primary" onclick="">Створення документу</button>
+					    </div>
+					  </div>
+					</form>
+				</div>
+			</div>
+			<table class="table table-striped">
+			  <thead>
+			    <tr>
+			      <th scope="col">Приватний виконавець</th>
+			      <th scope="col">Стан</th>
+			      <th scope="col">Виконавчий округ</th>
+			      <th scope="col">Номер посвідчення</th>
+			      <th scope="col">Дата видачі посвідчення</th>
+			      <th scope="col">Адреса офісу</th>
+			      <th scope="col">Дата рішення про надання права на здійснення діяльності</th>
+			      <th scope="col">Дата внесення до реєстру</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			  	<% privateExecutors.forEach(data =>{%>
+			    <tr>
+			      <td><%= data.fullname %></td>
+			      <td><%= data.is_active %></td>
+			      <td><%= data.district.district_name %></td>
+			      <td><%= data.certificate_num %></td>
+			      <td><%= data.rec_certif_on %></td>
+			      <td><%= data.office_addr %></td>
+			      <td><%= data.started_out_on %></td>
+			      <td><%= data.created_on %></td>
+			    </tr>
+			    <% }); %>
+			  </tbody>
+			</table>
 		</main>
 
 		<footer>

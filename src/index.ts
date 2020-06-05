@@ -3,6 +3,7 @@ import * as express from "express";
 import * as path from "path";
 import * as bodyParser from "body-parser";
 import * as cookieParser from "cookie-parser";
+import * as nocache from "nocache";
 
 import { cookieOptions, cookieName } from "./configs";
 import { v1 as uuidV1, v4 as uuidV4 } from "uuid";
@@ -10,6 +11,8 @@ import { v1 as uuidV1, v4 as uuidV4 } from "uuid";
 import { User } from "./models/user-model";
 import { PrivateExecutor } from "./models/private_executor-model";
 import { ExecutionDistrict } from "./models/execution_district-model";
+
+import { Like } from "typeorm";
 
 
 async function getLoggedUser(req: express.Request){
@@ -21,6 +24,7 @@ async function getLoggedUser(req: express.Request){
 
 const app: express.Application = express();
 
+app.use(nocache());
 app.set('view engine', 'ejs');
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true, limit: 3000000 }));
@@ -29,14 +33,31 @@ app.use(bodyParser.text({ limit: 30000000 }));
 
 app.use(express.static(path.join(__dirname,'static')));
 
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
 
 app.get('/', async (req: any, res: express.Response) => {
 	const loggedUser = await getLoggedUser(req);
 
 	const role = (loggedUser == undefined)? 0 : loggedUser.role;
+	const { fullname, district_id, is_active, certificate_num } = req.query;
+
+	let searchObj:any = {};
+
+	if(fullname!=undefined && fullname!="") searchObj.fullname = Like('%'+fullname+'%');
+	if(certificate_num!=undefined && certificate_num!="") searchObj.certificate_num = Like('%'+certificate_num+'%');
+	if(district_id!=undefined) searchObj.district_id = district_id;
+	if(is_active!=undefined) searchObj.is_active = is_active;
+
+	const privateExecutors = (Object.keys(searchObj).length>0)? (await PrivateExecutor.find(searchObj)) : [];
 
 	res.render('pages/main', {
-		role
+		role,
+		fullname, district_id, is_active, certificate_num,
+		districts: await ExecutionDistrict.find(),
+		privateExecutors: privateExecutors
 	});
 });
 app.get('/login', (req: any, res: express.Response) => {
@@ -247,7 +268,8 @@ app.use((err: Error, req: express.Request, resp: express.Response, next: Functio
 process.on('SIGINT',async () => (await connectionPromise).close().then(() => process.exit()));
 
 (async function(){
-	await (await connectionPromise).synchronize();
+	const connection = await connectionPromise;
+	//await connection.synchronize();
 
 	app.listen(process.env.PORT || 5000, () => {
 		console.log("Started server!");
