@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <%- include('../partials/head', {role: role}) -%>
+  </head>
+  <body class="container">
+
+    <header>
+        <%- include('../partials/header', {role: role}) -%>
+    </header>
+
+    <main>
+      <dir class="jumbotron">
+        Зареєстровані приватні виконавці даного користувача
+      </dir>
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">П.І.Б</th>
+            <th scope="col">Номер посвідчення</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% privateExecutors.forEach(data =>{%>
+          <tr>
+            <td><%= data.fullname %></td>
+            <td><%= data.certificate_num %></td>
+            <td>
+              <button type="button" class="btn btn-primary" onclick="window.location.href = '/priv-exec/<%= data.id %>/edit';"> Змінити </button>
+            </td>
+          </tr>
+          <% }); %>
+          <tr>
+            <td colspan="3">
+              <button type="button" class="btn btn-primary" onclick="window.location.href = '/priv-exec/new';">Додати приватного виконавця</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+
+    <footer>
+        <%- include('../partials/footer', {role}) -%>
+    </footer>
+
+  </body>
+</html>

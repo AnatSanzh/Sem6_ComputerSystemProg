@@ -1,8 +1,7 @@
 <nav class="navbar navbar-default" role="navigation">
     <div class="container-fluid">
-
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="javascript:void(0)">
                 <!--<span class="glyphicon glyphicon glyphicon-tree-deciduous"></span>-->
                 Єдиний реєстр приватних виконавців
             </a>
@@ -10,25 +9,32 @@
             <ul class="nav navbar-nav">
                 <li><a href="/">Дім</a></li>
 
-                <% if(role === 0){ %>
-                    <li><a href="/login">Зайти в систему</a></li>
+                <% if(role > 0){ %>
+                    <li><a href="/priv-exec/list">Власні приватні виконавці</a></li>
                 <% } %>
 
-                <% if(role === 0){ %>
-                    <li><a href="/login">Зайти в систему</a></li>
+                <% if(role > 1){ %>
+                    <li><a href="/registrator/list">Власні реєстратори</a></li>
                 <% } %>
 
-                <% if(role === 0){ %>
-                    <li><a href="/login">Зайти в систему</a></li>
+                <% if(role > 1){ %>
+                    <li><a href="/event-journal">Журнал повідомленнь</a></li>
                 <% } %>
                 
                 <% if(role === 0){ %>
                     <li><a href="/login">Зайти в систему</a></li>
                 <% }else{ %>
-                    <li><a href="/logout">Вийти</a></li>
-                <% %>
+                    <script type="text/javascript">
+                        function logOutSystem() {
+                            fetch("/api/auth/logout", {method: "POST"}).then(res => {
+                                if(res.ok)
+                                    window.location.href = '/';
+                            });
+                        }
+                    </script>
+                    <li><a href="javascript:void(0)" onclick="logOutSystem()">Вийти</a></li>
+                <% } %>
             </ul>
         </div>
-
     </div>
 </nav>

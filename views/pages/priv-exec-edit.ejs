@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <%- include('../partials/head', {role: role}) -%>
+	</head>
+	<body class="container">
+
+		<header>
+		    <%- include('../partials/header', {role: role}) -%>
+		</header>
+
+		<main>
+			<dir class="jumbotron">
+		     Зміна запису приватного виконавця
+		 	</dir>
+			<div class="panel panel-default">
+				<div class="panel-body">
+				    <form>
+					  <div class="form-group">
+					    <label for="inputName" class="col-sm-2 col-form-label">П.І.Б</label>
+					    <div class="col-sm-10">
+					      <input type="text" class="form-control" id="inputName" placeholder="Прізвище Ім'я По-Батькові" value="<%= oldPrivExecVal.fullname %>">
+					    </div>
+					  </div>
+					  <div class="form-group">
+					    <label for="inputCert" class="col-sm-2 col-form-label">Номер сертифікату:</label>
+					    <div class="col-sm-10">
+					      <input type="text" class="form-control" id="inputCert" placeholder="1234" value="<%= oldPrivExecVal.certificate_num %>">
+					    </div>
+					  </div>
+					  <div class="form-group">
+					      <label class="col-sm-2 col-form-label" for="selActivity">Активність:</label>
+					      <div class="col-sm-10">
+						      <select class="form-control" id="selActivity">
+						        <option value="1" <% if(oldPrivExecVal.is_active){ %> selected <% } %>>Діє</option>
+						        <option value="0" <% if(!oldPrivExecVal.is_active){ %> selected <% } %>>Недіє</option>
+						      </select>
+						  </div>
+					  </div>
+					  <div class="form-group">
+					      <label class="col-sm-2 col-form-label" for="selDistrict">Виконавчий округ:</label>
+					      <div class="col-sm-10">
+						      <select class="form-control" id="selDistrict">
+						        <% districts.forEach(({id, district_name}) => {%>
+						        <option value="<%= id %>" <% if(oldPrivExecVal.district.id===id){ %>selected<% } %> ><%= district_name %></option>
+						        <% }); %>
+						      </select>
+						   </div>
+					  </div>
+					  <div class="form-group">
+					    <label for="inputCertDate" class="col-sm-2 col-form-label">Дата отримання сертифікату:</label>
+					    <div class="col-sm-10">
+					      <input type="text" class="form-control" id="inputCertDate" value="<%= oldPrivExecVal.rec_certif_on %>">
+					    </div>
+					  </div>
+					  <div class="form-group">
+					    <label for="inputAddr" class="col-sm-2 col-form-label">Адреса офісу:</label>
+					    <div class="col-sm-10">
+					      <input type="text" class="form-control" id="inputAddr" value="<%= oldPrivExecVal.office_addr %>">
+					    </div>
+					  </div>
+					  <div class="form-group">
+					    <label for="inputStartDate" class="col-sm-2 col-form-label">Дата початку роботи:</label>
+					    <div class="col-sm-10">
+					      <input type="text" class="form-control" id="inputStartDate" value="<%= oldPrivExecVal.started_out_on %>">
+					    </div>
+					  </div>
+					  <div class="form-group">
+					    <div class="col-sm-10">
+					    	<script type="text/javascript">
+					    		var name_input = document.getElementById("inputName");
+								var cert_input = document.getElementById("inputCert");
+								var activity_sel = document.getElementById("selActivity");
+								var district_sel = document.getElementById("selDistrict");
+								var cert_date_input = document.getElementById("inputCertDate");
+								var addr_input = document.getElementById("inputAddr");
+								var start_date_input = document.getElementById("inputStartDate");
+
+					    		function add_new(){
+					    			var activity_val = activity_sel.options[activity_sel.selectedIndex].value;
+
+					    			fetch("/api/priv-exec/<%= oldPrivExecVal.id %>", {
+							            method: "PUT", 
+							            body: JSON.stringify({
+							            	fullname: name_input.value,
+							            	district_id: district_sel.options[district_sel.selectedIndex].value,
+							            	certificate_num: cert_input.value,
+							            	rec_certif_on: cert_date_input.value,
+							            	office_addr: addr_input.value,
+							            	started_out_on: start_date_input.value
+							            })
+							        }).then(res => {
+							            if(!res.ok){
+								            alert('Невірний формат полів!');
+								        }
+							        }
+					    		}
+
+					    		function delete_new(){
+					    			if(comfirm("Ви точно хочете видалити цього приватного виконавця?")==true)
+					    			fetch("/api/priv-exec/<%= oldPrivExecVal.id %>", {
+							            method: "DELETE"
+							        }).then(res => {
+							            window.location.href = '/priv-exec/list';
+							        }
+					    		}
+					    	</script>
+					      <button type="button" class="btn btn-primary" onclick="add_new()">Зберегти</button>
+					      <button type="button" class="btn btn-primary" onclick="delete_new()">Видалити</button>
+					    </div>
+					  </div>
+					</form>
+				</div>
+			</div>
+		</main>
+
+		<footer>
+		    <%- include('../partials/footer', {role}) -%>
+		</footer>
+
+	</body>
+</html>

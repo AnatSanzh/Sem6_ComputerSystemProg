@@ -11,8 +11,10 @@ import { v1 as uuidV1, v4 as uuidV4 } from "uuid";
 import { User } from "./models/user-model";
 import { PrivateExecutor } from "./models/private_executor-model";
 import { ExecutionDistrict } from "./models/execution_district-model";
+import { JournalEvent } from "./models/journal_event-model";
 
-import { Like } from "typeorm";
+
+import { Like, Equal } from "typeorm";
 
 
 async function getLoggedUser(req: express.Request){
@@ -68,52 +70,87 @@ app.get('/priv-exec/list', async (req: any, res: express.Response) => {
 
 	if(loggedUser == undefined) return res.redirect('/error/permission-denied');
 
-	//res.sendFile(path.join(__dirname,'public/index.html'));
+	res.render('pages/priv-exec-list', {
+		role: loggedUser.role,
+		privateExecutors: await PrivateExecutor.find({
+			relations: ['user'],
+			where: {
+				user: {
+					login: loggedUser.login
+				}
+			}
+		})
+	});
 });
 app.get('/registrator/list', async (req: any, res: express.Response) => {
 	const loggedUser = await getLoggedUser(req);
 
 	if(loggedUser == undefined) return res.redirect('/error/permission-denied');
 
-	//res.sendFile(path.join(__dirname,'public/index.html'));
+	res.render('pages/registrator-list', {
+		role: loggedUser.role,
+		registers: await User.find({ where: { role: 1 } })
+	});
 });
 app.get('/event-journal', async (req: any, res: express.Response) => {
 	const loggedUser = await getLoggedUser(req);
 
 	if(loggedUser == undefined) return res.redirect('/error/permission-denied');
 
-	//res.sendFile(path.join(__dirname,'public/index.html'));
+	const events = await JournalEvent.find({
+		relations: ['user'],
+		where: {
+			user: {
+				login: loggedUser.login
+			}
+		},
+		order: {
+			event_date: "DESC"
+		}
+	});
+	
+	res.render('pages/event-journal', { role: loggedUser.role, events });
 });
 app.get('/priv-exec/new', async (req: any, res: express.Response) => {
 	const loggedUser = await getLoggedUser(req);
 
 	if(loggedUser == undefined) return res.redirect('/error/permission-denied');
-
-	//res.sendFile(path.join(__dirname,'public/index.html'));
+	
+	res.render('pages/priv-exec-new', { role: loggedUser.role });
 });
-app.get('/priv-exec/edit', async (req: any, res: express.Response) => {
+app.get('/priv-exec/:id/edit', async (req: any, res: express.Response) => {
 	const loggedUser = await getLoggedUser(req);
 
-	if(loggedUser == undefined) return res.redirect('/error/permission-denied');
+	const oldPrivExecVal = await PrivateExecutor.findOne(req.params.id);
 
-	//res.sendFile(path.join(__dirname,'public/index.html'));
+	if(loggedUser == undefined || oldPrivExecVal == undefined)
+		return res.redirect('/error/permission-denied');
+	
+	res.render('pages/priv-exec-edit', { role: loggedUser.role, oldPrivExecVal });
 });
 app.get('/registrator/new', async (req: any, res: express.Response) => {
 	const loggedUser = await getLoggedUser(req);
 
 	if(loggedUser == undefined) return res.redirect('/error/permission-denied');
 
-	//res.sendFile(path.join(__dirname,'public/index.html'));
+	res.render('pages/registrator-new', { role: loggedUser.role });
 });
-app.get('/registrator/edit', async (req: any, res: express.Response) => {
+app.get('/registrator/:login/edit', async (req: any, res: express.Response) => {
 	const loggedUser = await getLoggedUser(req);
 
-	if(loggedUser == undefined) return res.redirect('/error/permission-denied');
+	const oldUserVal = await User.findOne(req.params.login);
 
-	//res.sendFile(path.join(__dirname,'public/index.html'));
+	if(loggedUser == undefined || oldUserVal == undefined)
+		return res.redirect('/error/permission-denied');
+
+	res.render('pages/registrator-edit', { role: loggedUser.role, oldUserVal });
 });
 app.get('/error/permission-denied', async (req: any, res: express.Response) => {
-	//res.sendFile(path.join(__dirname,'public/index.html'));
+	const loggedUser = await getLoggedUser(req);
+
+	const role = (loggedUser == undefined)? 0 : loggedUser.role;
+
+	res.render('pages/error', {role});
 });
 
 
@@ -122,7 +159,7 @@ app.post('/api/auth/login', async (req: express.Request, res: express.Response) 
 
 	const userData = await User.findOne(login);
 
-	if(userData.pwd_hash === password && userData.is_active === true){
+	if(userData != undefined && userData.pwd_hash === password && userData.is_active === true){
 		res.cookie(cookieName, JSON.stringify({login, password}), cookieOptions);
 
 	    res.status(200).send();
