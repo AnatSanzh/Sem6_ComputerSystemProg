@@ -77,13 +77,14 @@
 								var start_date_input = document.getElementById("inputStartDate");
 
 					    		function add_new(){
-					    			var activity_val = activity_sel.options[activity_sel.selectedIndex].value;
+					    			var activity_val = ;
 
 					    			fetch("/api/priv-exec/<%= oldPrivExecVal.id %>", {
 							            method: "PUT", 
 							            body: JSON.stringify({
 							            	fullname: name_input.value,
 							            	district_id: district_sel.options[district_sel.selectedIndex].value,
+							            	is_active: activity_sel.options[activity_sel.selectedIndex].value == 1,
 							            	certificate_num: cert_input.value,
 							            	rec_certif_on: cert_date_input.value,
 							            	office_addr: addr_input.value,

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <%- include('../partials/head', {role: role}) -%>
+	</head>
+	<body class="container">
+
+		<header>
+		    <%- include('../partials/header', {role: role}) -%>
+		</header>
+
+		<main>
+			<dir class="jumbotron">
+		     Запис нового Реєстратора
+		 	</dir>
+			<div class="panel panel-default">
+				<div class="panel-body">
+				    <form>
+					  <div class="form-group">
+					    <label for="inputName" class="col-sm-2 col-form-label">П.І.Б</label>
+					    <div class="col-sm-10">
+					      <input type="text" class="form-control" id="inputName" placeholder="Прізвище Ім'я По-Батькові">
+					    </div>
+					  </div>
+					  <div class="form-group">
+					    <label for="inputDate" class="col-sm-2 col-form-label">Дата народження
+					    <div class="col-sm-10">
+					      <input type="text" class="form-control" id="inputDate" placeholder="12.03.2004">
+					    </div>
+					  </div>
+					  <div class="form-group">
+					    <label for="inputPass" class="col-sm-2 col-form-label">Номер паспорту</label>
+					    <div class="col-sm-10">
+					      <input type="text" class="form-control" id="inputPass">
+					    </div>
+					  </div>
+					  <div class="form-group">
+					    <div class="col-sm-10">
+					    	<script type="text/javascript">
+					    		var name_input = document.getElementById("inputName");
+								var date_input = document.getElementById("inputDate");
+								var pass_input = document.getElementById("inputPass");
+
+					    		function add_new(){
+					    			fetch("/api/user", {
+							            method: "POST", 
+							            body: JSON.stringify({
+							            	fullname: name_input.value,
+							            	additional_data: "Дата народження: "+date_input.value+" Номер паспорту: "+pass_input.value
+							            })
+							        }).then(res => {
+							            if(res.ok){
+							              window.location.href = '/registrator/list';
+								        }else{
+								            alert('Невірний формат полів!');
+								        }
+					    			}
+					    		}
+					    	</script>
+					      <button type="button" class="btn btn-primary" onclick="add_new()">Зберегти</button>
+					    </div>
+					  </div>
+					</form>
+				</div>
+			</div>
+		</main>
+
+		<footer>
+		    <%- include('../partials/footer', {role}) -%>
+		</footer>
+
+	</body>
+</html>

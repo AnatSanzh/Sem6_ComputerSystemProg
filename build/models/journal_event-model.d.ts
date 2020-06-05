@@ -9,4 +9,5 @@ export declare class JournalEvent extends BaseEntity {
     new_value: string;
     user_ip: string;
 }
+export declare const EventTypes: string[];
 //# sourceMappingURL=journal_event-model.d.ts.map
