@@ -249,12 +249,14 @@ app.post('/api/priv-exec', async (req: express.Request, res: express.Response) =
 	} = JSON.parse(req.body);
 	const user = await getLoggedUser(req);
 
+	console.log(JSON.parse(req.body));
+
 	if(await PrivateExecutor.findOne({ fullname }) == undefined){
 		const privExec = new PrivateExecutor();
 
 		privExec.fullname = fullname;
 		privExec.user = user;
-		privExec.district = await ExecutionDistrict.findOne(district_id);
+		privExec.district = await ExecutionDistrict.findOne(Number(district_id));
 		privExec.is_active = true;
 		privExec.created_on = (new Date()).toISOString();
 		privExec.certificate_num = certificate_num;
@@ -283,7 +285,7 @@ app.put('/api/priv-exec/:id', async (req: express.Request, res: express.Response
 	}
 
 	if(fullname != undefined) privExec.fullname = fullname;
-	if(district_id != undefined) privExec.district = await ExecutionDistrict.findOne(district_id);
+	if(district_id != undefined) privExec.district = await ExecutionDistrict.findOne(Number(district_id));
 	if(certificate_num != undefined) privExec.certificate_num = certificate_num;
 	if(rec_certif_on != undefined) privExec.rec_certif_on = rec_certif_on;
 	if(office_addr != undefined) privExec.office_addr = office_addr;
