@@ -1,0 +1,9 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.cookieName = 'userID';
+exports.cookieOptions = {
+    maxAge: 1000 * 60 * 60 * 12,
+    httpOnly: true,
+    signed: true // Indicates if the cookie should be signed
+};
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY29uZmlncy5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uL3NyYy9jb25maWdzLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQWEsUUFBQSxVQUFVLEdBQVcsUUFBUSxDQUFDO0FBQzlCLFFBQUEsYUFBYSxHQUFHO0lBQzVCLE1BQU0sRUFBRSxJQUFJLEdBQUcsRUFBRSxHQUFHLEVBQUUsR0FBRyxFQUFFO0lBQzNCLFFBQVEsRUFBRSxJQUFJO0lBQ2QsTUFBTSxFQUFFLElBQUksQ0FBQywyQ0FBMkM7Q0FDeEQsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCBjb25zdCBjb29raWVOYW1lOiBzdHJpbmcgPSAndXNlcklEJztcclxuZXhwb3J0IGNvbnN0IGNvb2tpZU9wdGlvbnMgPSB7XHJcblx0bWF4QWdlOiAxMDAwICogNjAgKiA2MCAqIDEyLCAvLyB3b3VsZCBleHBpcmUgYWZ0ZXIgMTIgaG91cnNcclxuXHRodHRwT25seTogdHJ1ZSwgLy8gVGhlIGNvb2tpZSBvbmx5IGFjY2Vzc2libGUgYnkgdGhlIHdlYiBzZXJ2ZXJcclxuXHRzaWduZWQ6IHRydWUgLy8gSW5kaWNhdGVzIGlmIHRoZSBjb29raWUgc2hvdWxkIGJlIHNpZ25lZFxyXG59OyJdfQ==
