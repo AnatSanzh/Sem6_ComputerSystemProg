@@ -28,13 +28,13 @@
             <td><%= data.fullname %></td>
             <td><%= data.is_active? "діє":"недіє" %></td>
             <td>
-              <button type="button" class="btn btn-primary" onclick="window.location.href = '/priv-exec/<%= data.id %>/edit';"> Змінити </button>
+              <button type="button" class="btn btn-primary" onclick="window.location.href = '/registrator/<%= data.login %>/edit';"> Змінити </button>
             </td>
           </tr>
           <% }); %>
           <tr>
             <td colspan="3">
-              <button type="button" class="btn btn-primary" onclick="window.location.href = '/priv-exec/new';">Додати реєстратора</button>
+              <button type="button" class="btn btn-primary" onclick="window.location.href = '/registrator/new';">Додати реєстратора</button>
             </td>
           </tr>
         </tbody>

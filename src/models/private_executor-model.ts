@@ -19,11 +19,11 @@ export class PrivateExecutor extends BaseEntity {
   fullname: string;
 
   @ManyToOne(type => User, user => user.login, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: "user_login" })
+  @JoinColumn({ name: "user_login", referencedColumnName: "login" })
   user: User;
 
   @ManyToOne(type => ExecutionDistrict, district => district.id, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: "district_id" })
+  @JoinColumn({ name: "district_id", referencedColumnName: "id" })
   district: ExecutionDistrict;
 
   @Column()

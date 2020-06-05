@@ -21,10 +21,6 @@ async function getLoggedUser(req: express.Request){
 	if(req.cookies[cookieName] == undefined || req.cookies[cookieName] == "")
 		return;
 
-	console.log(req.cookies[cookieName]);
-	console.log(decodeURIComponent(req.cookies[cookieName]));
-	console.log(JSON.parse(decodeURIComponent(req.cookies[cookieName])));
-
 	return User.findOne(JSON.parse(decodeURIComponent(req.cookies[cookieName])).login);
 }
 
@@ -57,7 +53,13 @@ app.get('/', async (req: any, res: express.Response) => {
 	if(district_id!=undefined) searchObj.district_id = district_id;
 	if(is_active!=undefined) searchObj.is_active = is_active;
 
-	const privateExecutors = (Object.keys(searchObj).length>0)? (await PrivateExecutor.find(searchObj)) : [];
+	const privateExecutors = (Object.keys(searchObj).length>0)? (await PrivateExecutor.find(
+		{
+			where: searchObj,
+			relations: ["district"]
+		})) : [];
+
+	console.log(privateExecutors);
 
 	res.render('pages/main', {
 		role,
@@ -125,7 +127,12 @@ app.get('/priv-exec/new', async (req: any, res: express.Response) => {
 app.get('/priv-exec/:id/edit', async (req: any, res: express.Response) => {
 	const loggedUser = await getLoggedUser(req);
 
-	const oldPrivExecVal = await PrivateExecutor.findOne(req.params.id);
+	const oldPrivExecVal = await PrivateExecutor.findOne({
+		where: {
+			id: req.params.id
+		},
+		relations: ["district"]
+	});
 
 	if(loggedUser == undefined || oldPrivExecVal == undefined)
 		return res.redirect('/error/permission-denied');

@@ -94,7 +94,7 @@
 			  	<% privateExecutors.forEach(data =>{%>
 			    <tr>
 			      <td><%= data.fullname %></td>
-			      <td><%= data.is_active %></td>
+			      <td><%= data.is_active?"Діє": "Не діє"%></td>
 			      <td><%= data.district.district_name %></td>
 			      <td><%= data.certificate_num %></td>
 			      <td><%= data.rec_certif_on %></td>
