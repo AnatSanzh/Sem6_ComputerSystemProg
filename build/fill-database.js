@@ -1,0 +1,29 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const database_1 = require("./models/database");
+const user_model_1 = require("./models/user-model");
+const execution_district_model_1 = require("./models/execution_district-model");
+process.on('SIGINT', async () => (await database_1.default).close().then(() => process.exit()));
+(async function () {
+    const connection = await database_1.default;
+    //await connection.synchronize();
+    const districtNames = ["Київська область", "Закарпатська область", "Черкаська область", "Полтавська область"];
+    for (const name in districtNames) {
+        const tempDistrict = new execution_district_model_1.ExecutionDistrict();
+        tempDistrict.district_name = name;
+        await tempDistrict.save();
+    }
+    {
+        const admin = new user_model_1.User();
+        admin.login = "admin";
+        admin.fullname = "Андрій Андрійович Андрієнко";
+        admin.role = 2;
+        admin.date_registration = (new Date()).toISOString();
+        admin.pwd_hash = "1234";
+        admin.is_active = true;
+        admin.additional_data = "";
+        await admin.save();
+    }
+    process.exit();
+})();
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZmlsbC1kYXRhYmFzZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uL3NyYy9maWxsLWRhdGFiYXNlLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsZ0RBQWtEO0FBRWxELG9EQUEyQztBQUMzQyxnRkFBc0U7QUFHdEUsT0FBTyxDQUFDLEVBQUUsQ0FBQyxRQUFRLEVBQUMsS0FBSyxJQUFJLEVBQUUsQ0FBQyxDQUFDLE1BQU0sa0JBQWlCLENBQUMsQ0FBQyxLQUFLLEVBQUUsQ0FBQyxJQUFJLENBQUMsR0FBRyxFQUFFLENBQUMsT0FBTyxDQUFDLElBQUksRUFBRSxDQUFDLENBQUMsQ0FBQztBQUU5RixDQUFDLEtBQUs7SUFDTCxNQUFNLFVBQVUsR0FBRyxNQUFNLGtCQUFpQixDQUFDO0lBQzNDLGlDQUFpQztJQUVqQyxNQUFNLGFBQWEsR0FBRyxDQUFDLGtCQUFrQixFQUFDLHNCQUFzQixFQUFDLG1CQUFtQixFQUFDLG9CQUFvQixDQUFDLENBQUM7SUFDM0csS0FBSyxNQUFNLElBQUksSUFBSSxhQUFhLEVBQUU7UUFDakMsTUFBTSxZQUFZLEdBQUcsSUFBSSw0Q0FBaUIsRUFBRSxDQUFDO1FBQzdDLFlBQVksQ0FBQyxhQUFhLEdBQUcsSUFBSSxDQUFDO1FBQ2xDLE1BQU0sWUFBWSxDQUFDLElBQUksRUFBRSxDQUFDO0tBQzFCO0lBRUQ7UUFDQyxNQUFNLEtBQUssR0FBRyxJQUFJLGlCQUFJLEVBQUUsQ0FBQztRQUV6QixLQUFLLENBQUMsS0FBSyxHQUFHLE9BQU8sQ0FBQztRQUN0QixLQUFLLENBQUMsUUFBUSxHQUFHLDZCQUE2QixDQUFDO1FBQy9DLEtBQUssQ0FBQyxJQUFJLEdBQUcsQ0FBQyxDQUFDO1FBQ2YsS0FBSyxDQUFDLGlCQUFpQixHQUFHLENBQUMsSUFBSSxJQUFJLEVBQUUsQ0FBQyxDQUFDLFdBQVcsRUFBRSxDQUFDO1FBQ3JELEtBQUssQ0FBQyxRQUFRLEdBQUcsTUFBTSxDQUFDO1FBQ3hCLEtBQUssQ0FBQyxTQUFTLEdBQUcsSUFBSSxDQUFDO1FBQ3ZCLEtBQUssQ0FBQyxlQUFlLEdBQUcsRUFBRSxDQUFDO1FBRTNCLE1BQU0sS0FBSyxDQUFDLElBQUksRUFBRSxDQUFDO0tBQ25CO0lBRUQsT0FBTyxDQUFDLElBQUksRUFBRSxDQUFDO0FBQ2hCLENBQUMsQ0FBQyxFQUFFLENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgY29ubmVjdGlvblByb21pc2UgZnJvbSAnLi9tb2RlbHMvZGF0YWJhc2UnO1xuXG5pbXBvcnQgeyBVc2VyIH0gZnJvbSBcIi4vbW9kZWxzL3VzZXItbW9kZWxcIjtcbmltcG9ydCB7IEV4ZWN1dGlvbkRpc3RyaWN0IH0gZnJvbSBcIi4vbW9kZWxzL2V4ZWN1dGlvbl9kaXN0cmljdC1tb2RlbFwiO1xuXG5cbnByb2Nlc3Mub24oJ1NJR0lOVCcsYXN5bmMgKCkgPT4gKGF3YWl0IGNvbm5lY3Rpb25Qcm9taXNlKS5jbG9zZSgpLnRoZW4oKCkgPT4gcHJvY2Vzcy5leGl0KCkpKTtcblxuKGFzeW5jIGZ1bmN0aW9uKCl7XG5cdGNvbnN0IGNvbm5lY3Rpb24gPSBhd2FpdCBjb25uZWN0aW9uUHJvbWlzZTtcblx0Ly9hd2FpdCBjb25uZWN0aW9uLnN5bmNocm9uaXplKCk7XG5cblx0Y29uc3QgZGlzdHJpY3ROYW1lcyA9IFtcItCa0LjRl9Cy0YHRjNC60LAg0L7QsdC70LDRgdGC0YxcIixcItCX0LDQutCw0YDQv9Cw0YLRgdGM0LrQsCDQvtCx0LvQsNGB0YLRjFwiLFwi0KfQtdGA0LrQsNGB0YzQutCwINC+0LHQu9Cw0YHRgtGMXCIsXCLQn9C+0LvRgtCw0LLRgdGM0LrQsCDQvtCx0LvQsNGB0YLRjFwiXTtcblx0Zm9yIChjb25zdCBuYW1lIGluIGRpc3RyaWN0TmFtZXMpIHtcblx0XHRjb25zdCB0ZW1wRGlzdHJpY3QgPSBuZXcgRXhlY3V0aW9uRGlzdHJpY3QoKTtcblx0XHR0ZW1wRGlzdHJpY3QuZGlzdHJpY3RfbmFtZSA9IG5hbWU7XG5cdFx0YXdhaXQgdGVtcERpc3RyaWN0LnNhdmUoKTtcblx0fVxuXG5cdHtcblx0XHRjb25zdCBhZG1pbiA9IG5ldyBVc2VyKCk7XG5cblx0XHRhZG1pbi5sb2dpbiA9IFwiYWRtaW5cIjtcblx0XHRhZG1pbi5mdWxsbmFtZSA9IFwi0JDQvdC00YDRltC5INCQ0L3QtNGA0ZbQudC+0LLQuNGHINCQ0L3QtNGA0ZbRlNC90LrQvlwiO1xuXHRcdGFkbWluLnJvbGUgPSAyO1xuXHRcdGFkbWluLmRhdGVfcmVnaXN0cmF0aW9uID0gKG5ldyBEYXRlKCkpLnRvSVNPU3RyaW5nKCk7XG5cdFx0YWRtaW4ucHdkX2hhc2ggPSBcIjEyMzRcIjtcblx0XHRhZG1pbi5pc19hY3RpdmUgPSB0cnVlO1xuXHRcdGFkbWluLmFkZGl0aW9uYWxfZGF0YSA9IFwiXCI7XG5cblx0XHRhd2FpdCBhZG1pbi5zYXZlKCk7XG5cdH1cblxuXHRwcm9jZXNzLmV4aXQoKTtcbn0pKCk7Il19
